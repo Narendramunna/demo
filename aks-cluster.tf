@@ -24,8 +24,8 @@
 8. Cluster Tags  
 */
 
-resource "azurerm_kubernetes_cluster" "aks-sgdfc-rg" {
-  name                = "${azurerm_resource_group.aks-sgdfc-sandbox.name}-cluster"
+resource "azurerm_kubernetes_cluster" "aks_cluster" {
+  name                = "${azurerm_resource_group.aks_rg.name}-cluster"
   location            = azurerm_resource_group.aks_rg.location
   resource_group_name = azurerm_resource_group.aks_rg.name
   dns_prefix          = "${azurerm_resource_group.aks_rg.name}-cluster"
@@ -37,14 +37,14 @@ resource "azurerm_kubernetes_cluster" "aks-sgdfc-rg" {
     vm_size              = "Standard_DS2_v2"
     orchestrator_version = data.azurerm_kubernetes_service_versions.current.latest_version
     availability_zones   = [1, 2, 3]
-    enable_auto_scaling  = null
-    max_count            = 110
-    min_count            = null
-    os_disk_size_gb      = 128
+    enable_auto_scaling  = true
+    max_count            = 3
+    min_count            = 1
+    os_disk_size_gb      = 30
     type                 = "VirtualMachineScaleSets"
-    node_labels = {}
+    node_labels = {
       "nodepool-type"    = "system"
-      "environment"      = "prod"
+      "environment"      = "dev"
       "nodepoolos"       = "linux"
       "app"              = "system-apps" 
     } 
@@ -99,7 +99,7 @@ resource "azurerm_kubernetes_cluster" "aks-sgdfc-rg" {
     load_balancer_sku = "Standard"
   }
 
-  tags : null {
-    Environment = "prod"
+  tags = {
+    Environment = "dev"
   }
 }
